@@ -1,7 +1,7 @@
 import React from "react"
 import { Link, useParams } from "react-router-dom"
 
-const SinglePost = ({posts}) => {
+const SinglePost = ({posts, edit, deleteTodo}) => {
     // get the params from the url
     const params = useParams()
     const id = parseInt(params.id)
@@ -23,6 +23,8 @@ const SinglePost = ({posts}) => {
     return <div style={div}>
         <h1>{post?.subject}</h1>
         <h2>{post?.details}</h2>
+        <button onClick={() => deleteTodo(post)}>Delete</button>
+        <button onClick={() => edit(post)}>Edit</button>
         <Link to="/">
             <button>Go back</button>
         </Link>

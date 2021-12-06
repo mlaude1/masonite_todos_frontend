@@ -29,6 +29,9 @@ function App() {
   /////////////////////////
   // State and Other Variables
   /////////////////////////
+  
+  const navigate = useNavigate()
+  
   const url = "https://mlaude-mason-todos-backend.herokuapp.com/todos/";
 
   // state to hold list of todos
@@ -39,6 +42,8 @@ function App() {
     subject: "",
     details: ""
   }
+  
+  const [targetTodo, setTargetTodo] = useState(nullTodo)
 
   /////////////////////////
   // Functions
@@ -64,6 +69,35 @@ function App() {
     getTodos()
   }
 
+  // to select a todo to edit
+  const getTargetTodo = (todo) => {
+    setTargetTodo(todo)
+    navigate("/edit")
+  }
+
+  // update todo for our handlesubmit prop
+  const updateTodo = async (todo) => {
+    await fetch(url + todo.id, {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(todo)
+    });
+
+    // update todos
+    getTodos();
+  }
+
+  // function to delete todo
+  const deleteTodo = async (todo) => {
+    await fetch(url + todo.id, {
+      method: "delete"
+    });
+    getTodos()
+    navigate("/")
+  }
+
   /////////////////////////
   // useEffects
   /////////////////////////
@@ -81,13 +115,20 @@ function App() {
       <Link to="/new"><button style={button}>Create New Todo</button></Link>
       <Routes>
         <Route path="/" element={<AllPosts posts={posts}/>}/>
-        <Route path="/post/:id" element={<SinglePost posts={posts}/>}/>
+        <Route path="/post/:id" element={<SinglePost posts={posts}
+        edit={getTargetTodo}
+        deleteTodo={deleteTodo}
+        />}/>
         <Route path="/new" element={<Form
           initialTodo={nullTodo}
           handleSubmit={addTodos}
           buttonLabel="Create Todo"
         />}/>
-        <Route path="/edit" element={<Form/>}/>
+        <Route path="/edit" element={<Form
+        initialTodo={targetTodo}
+        handleSubmit={updateTodo}
+        buttonLabel="Update Todo"
+        />}/>
       </Routes>
     </div>
   );
